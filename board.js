@@ -5,9 +5,9 @@
  * @param {Int} height 
  * @param {Array<Int>} cells the array to use for the cells (default: new Uint8Array(width * height))
  */
-function Board(width=32, height=32, cells) {
-  this.width = width
-  this.height = height
+function Board(width = 32, height = 32, cells) {
+  this.width = width;
+  this.height = height;
   // We'll store our cells in a 1D typed array.
   // Typed arrays are a lot like normal arrays, but they're
   // (1) much faster, and (2) can only hold one kind of data type.
@@ -16,8 +16,7 @@ function Board(width=32, height=32, cells) {
   //
   // Since we only really need to track 1 bit per cell, this is positively
   // luxurious for our needs.
-  console.log("nope");
-  this.cells = cells || new Uint8Array(width * height)
+  this.cells = cells || new Uint8Array(width * height);
 }
 
 /**
@@ -38,8 +37,8 @@ Board.prototype.indexFor = function([row, col]) {
   // Return undefined if we're out of bounds
   if (row < 0 || row >= this.height || col < 0 || col >= this.width)
     return  
-  return row * this.width + col
-}
+  return row * this.width + col;
+};
 
 /**
  * get(coords: [row: int, col: int]) -> uint8
@@ -48,7 +47,7 @@ Board.prototype.indexFor = function([row, col]) {
  */
 Board.prototype.get = function (coords) {
   return this.cells[this.indexFor(coords)] || 0
-}
+};
 
 /**
  * set(coords: [row: int, col: int], value: uint8)
@@ -56,17 +55,42 @@ Board.prototype.get = function (coords) {
  * Set the value of the board at coords to value.
  */
 Board.prototype.set = function(coords, value) {
-  // TODO
-}
+  this.cells[this.indexFor(coords)] = value;
+};
 
 /**
  * livingNeighbors(coords: [row: int, col: int])
  * 
  * Return the count of living neighbors around a given coordinate.
+ * Any live cell with two or three live neighbors lives on to the next generation.
+ * Any live cell with fewer than two live neighbors dies, as if caused by under-population.
+ * Any live cell with more than three live neighbors dies, as if by overcrowding.
+ * Any dead cell with exactly three live neighbors becomes a live cell, as if by reproduction.
  */
 Board.prototype.livingNeighbors = function([row, col]) {
   // TODO: Return the count of living neighbors.
-}
+  const resident = this.indexFor([row,col]),
+        neighbors = [
+        this.indexFor([row - 1, col]),
+        this.indexFor([row, col - 1]),
+        this.indexFor([row, col + 1]),
+        this.indexFor([row + 1, col]),
+        this.indexFor([row - 1, col - 1]),
+        this.indexFor([row - 1, col + 1]),
+        this.indexFor([row + 1, col - 1]),
+        this.indexFor([row + 1, col + 1])];
+
+  console.log('neighbors:',neighbors);
+  let counter = 0;
+
+  for (let i = 0; i < neighbors.length; i++) {
+    if (neighbors[i] !== null && neighbors[i]) {
+      counter++;
+    }
+  }
+
+  return counter;
+};
 
 /**
  * toggle(coords: [row: int, col: int])
@@ -75,7 +99,7 @@ Board.prototype.livingNeighbors = function([row, col]) {
  */
 Board.prototype.toggle = function(coords) {
   // TODO
-}
+};
 
 /**
  * Give the vitals of a cell (its current state, and how many living neighbors it

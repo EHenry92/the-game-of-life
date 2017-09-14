@@ -1,26 +1,26 @@
 describe('new Board', () => {
   it('creates a 32x32 board by default', () => {
-    var board = new Board
-    expect(board.width).toEqual(32)
-    expect(board.height).toEqual(32)
+    var board = new Board;
+    expect(board.width).toEqual(32);
+    expect(board.height).toEqual(32);
     expect(board.cells.length).toEqual(32 * 32)
-  })
+  });
 
   it('creates a board of a specified size', () => {
-    var board = new Board(7, 9)
-    expect(board.width).toEqual(7)
-    expect(board.height).toEqual(9)
-    expect(board.cells.length).toEqual(7 * 9)
+    var board = new Board(7, 9);
+    expect(board.width).toEqual(7);
+    expect(board.height).toEqual(9);
+    expect(board.cells.length).toEqual(7 * 9);
   })
-})
+});
 
 describe('Board::indexFor(coords: [row, col])', () => {  
   it('returns 0 for (0, 0)', () => {
     expect(new Board().indexFor([0, 0])).toEqual(0)
-  })
+  });
 
   describe('uses row major indexing', () => {
-    var board = new Board()
+    var board = new Board();
 
     it('so advancing col by 1 increases the index by 1', () => {
       expect(board.indexFor([0, 1])).toEqual(1)
@@ -29,16 +29,16 @@ describe('Board::indexFor(coords: [row, col])', () => {
     it('so advancing row by 1 increases the index by board.width', () => {
       expect(board.indexFor([3, 0])).toEqual(3 * board.width)
     })
-  })
+  });
 
   it('returns the last index for (rows - 1, cols - 1)', () => {
     expect(new Board(10, 7).indexFor([6, 9])).toEqual(10 * 7 - 1)
-  })
+  });
 
   it('returns undefined for indexes that are out of bounds', () => {
     expect(new Board(10, 10).indexFor([10, 10])).toBeUndefined()
   })
-})
+});
 
 describe('Board::get(coords)', () => {
   var board; beforeEach(() =>
@@ -46,30 +46,30 @@ describe('Board::get(coords)', () => {
       0, 1, 0,
       0, 0, 0,
       1, 1, 1
-    ]))
+    ]));
 
   it('returns the value of cells that are there', () => {    
     expect(board.get([0, 1])).toEqual(1)    
-  })
+  });
 
   it('returns 0 for cells that are off the board', () => {
     expect(board.get([10, 10])).toEqual(0)
   })
-})
+});
 
 describe('Board::set(coords, value)', () => {
-  var board; beforeEach(() => board = new Board)
+  var board; beforeEach(() => board = new Board);
 
   it('sets (0, 0) to true', () => {
-    board.set([0, 0], true)
+    board.set([0, 0], true);
     expect(board.cells[0]).toEqual(1)
-  })
+  });
 
   it('sets some arbitrary middle cell to true', () => {
-    var coords = [19, 7]
+    var coords = [19, 7];
     board.set(coords, true)
     expect(board.get(coords)).toBeTruthy()
-  })
+  });
 
   it('unsets cells as well', () => {
     var coords = [board.width - 1, board.height - 1]
@@ -78,47 +78,47 @@ describe('Board::set(coords, value)', () => {
     board.set(coords, false)
     expect(board.get(coords)).toBeFalsy()
   })
-})
+});
 
 describe('Board::livingNeighbors(coords)', () => {
   it('treats cells off the board as dead', () => {
     var board = new Board(3, 3, [1, 1, 1,
                                  1, 1, 1,
-                                 1, 1, 1])
+                                 1, 1, 1]);
     expect(board.livingNeighbors([0, 0])).toEqual(3)
-  })
+  });
 
   it("doesn't include the cell itself", () => {
     var board = new Board(3, 3,
       [1, 1, 1,
        1, 1, 1,
-       1, 1, 1])
+       1, 1, 1]);
     expect(board.livingNeighbors([1, 1])).toEqual(8)
 
     board = new Board(3, 3,
       [1, 0, 1,
        0, 1, 1,
-       0, 0, 0])
+       0, 0, 0]);
     expect(board.livingNeighbors([1, 1])).toEqual(3)
-  })
+  });
 
   it('counts only living cells', () => {
     var board = new Board(3, 3,
       [1, 1, 1,
        1, 1, 1,
-       0, 0, 0])
+       0, 0, 0]);
     expect(board.livingNeighbors([1, 1])).toEqual(5)
 
     board = new Board(3, 3,
       [1, 0, 1,
        0, 0, 1,
-       0, 0, 0])
+       0, 0, 0]);
     expect(board.livingNeighbors([1, 1])).toEqual(3)
   })
-})
+});
 
 describe('Board::toggle(coords, value)', () => {
-  var board; beforeEach(() => board = new Board)
+  var board; beforeEach(() => board = new Board);
 
   it('switches cells from off to on', () => {
     var coord = [0, 0]
