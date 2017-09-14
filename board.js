@@ -46,7 +46,7 @@ Board.prototype.indexFor = function([row, col]) {
  * Get the value of the board at coords.
  */
 Board.prototype.get = function (coords) {
-  return this.cells[this.indexFor(coords)] || 0
+  return this.cells[this.indexFor(coords)] || 0;
 };
 
 /**
@@ -62,13 +62,8 @@ Board.prototype.set = function(coords, value) {
  * livingNeighbors(coords: [row: int, col: int])
  * 
  * Return the count of living neighbors around a given coordinate.
- * Any live cell with two or three live neighbors lives on to the next generation.
- * Any live cell with fewer than two live neighbors dies, as if caused by under-population.
- * Any live cell with more than three live neighbors dies, as if by overcrowding.
- * Any dead cell with exactly three live neighbors becomes a live cell, as if by reproduction.
  */
 Board.prototype.livingNeighbors = function([row, col]) {
-  // TODO: Return the count of living neighbors.
   const resident = this.indexFor([row,col]),
         neighbors = [
         this.indexFor([row - 1, col]),
@@ -80,11 +75,10 @@ Board.prototype.livingNeighbors = function([row, col]) {
         this.indexFor([row + 1, col - 1]),
         this.indexFor([row + 1, col + 1])];
 
-  console.log('neighbors:',neighbors);
   let counter = 0;
 
   for (let i = 0; i < neighbors.length; i++) {
-    if (neighbors[i] !== null && neighbors[i]) {
+    if (this.cells[neighbors[i]]) {
       counter++;
     }
   }
@@ -98,7 +92,7 @@ Board.prototype.livingNeighbors = function([row, col]) {
  * Toggle the cell at coords from alive to dead or vice versa.
  */
 Board.prototype.toggle = function(coords) {
-  // TODO
+  this.set(coords,!this.get(coords));
 };
 
 /**
@@ -106,10 +100,16 @@ Board.prototype.toggle = function(coords) {
  * currently has), return whether it will be alive in the next tick. 
  * 
  * @param {Boolean} isAlive 
- * @param {Number} numLivingNeighbors 
+ * @param {Number} numLivingNeighbors
  */
 function conway(isAlive, numLivingNeighbors) {
-  // TODO
+  if (isAlive && numLivingNeighbors === 2 || isAlive && numLivingNeighbors === 3) {
+    return true;
+  } else if (!isAlive && numLivingNeighbors === 3) {
+    return true;
+  }
+
+  return false;
 }
 
 /**
@@ -120,7 +120,54 @@ function conway(isAlive, numLivingNeighbors) {
  * @param {Board!} future (is mutated)
  * @param {(Boolean, Int) -> Boolean} rules (default: conway)
  */
-function tick(present, future, rules=conway) {
-  // TODO
-  return [future, present]
+function tick(present, future, rules = conway) {
+  const futureArr = [];
+
+  if (conway) {
+    for (let i = 0; i < futureArr.length; i++) {
+      if (rules(futureArr[i], future.livingNeighbors(findCoords(i)))) {
+        future.cells[i] = 1;
+      } else {
+        future.cells[i] = 0;
+      }
+    }
+
+
+    // future.cells = futureArr.map(elem => {
+    //   console.log('elem:',elem);
+    //   if (rules(elem, elem.livingNeighbors(findCoords()))) {
+    //     return 1;
+    //   } else {
+    //     return 0;
+    //   }
+    // });
+  }
+
+  Object.assign(future.cells, present.cells);
+
+  for (let theCell in future.cells) {
+    futureArr.push(future.cells[theCell]);
+  }
+
+  future.cells = futureArr.map(elem => {
+    if (rules(elem)) {
+      return 1;
+    } else {
+      return 0;
+    }
+  });
+
+
+  return [future, present];
+}
+
+function findCoords(index) {
+  console.log(index)
+
+  const row = Math.floor(index/this.width),
+        col = Math.floor(index - (row*this.width));
+
+  console.log(row, col)
+
+  return [row, col];
 }

@@ -93,7 +93,7 @@ describe('Board::livingNeighbors(coords)', () => {
       [1, 1, 1,
        1, 1, 1,
        1, 1, 1]);
-    expect(board.livingNeighbors([1, 1])).toEqual(8)
+    expect(board.livingNeighbors([1, 1])).toEqual(8);
 
     board = new Board(3, 3,
       [1, 0, 1,
@@ -107,7 +107,7 @@ describe('Board::livingNeighbors(coords)', () => {
       [1, 1, 1,
        1, 1, 1,
        0, 0, 0]);
-    expect(board.livingNeighbors([1, 1])).toEqual(5)
+    expect(board.livingNeighbors([1, 1])).toEqual(5);
 
     board = new Board(3, 3,
       [1, 0, 1,
@@ -121,32 +121,32 @@ describe('Board::toggle(coords, value)', () => {
   var board; beforeEach(() => board = new Board);
 
   it('switches cells from off to on', () => {
-    var coord = [0, 0]
-    expect(board.get(coord)).toBeFalsy()
-    board.toggle(coord)
-    expect(board.get(coord)).toBeTruthy()
-  })
+    var coord = [0, 0];
+    expect(board.get(coord)).toBeFalsy();
+    board.toggle(coord);
+    expect(board.get(coord)).toBeTruthy();
+  });
 
   it('switches cells from on to off', () => {
-    var coord = [0, 0]
-    board.set(coord, true)
-    expect(board.get(coord)).toBeTruthy()
-    board.toggle(coord)
-    expect(board.get(coord)).toBeFalsy()
+    var coord = [0, 0];
+    board.set(coord, true);
+    expect(board.get(coord)).toBeTruthy();
+    board.toggle(coord);
+    expect(board.get(coord)).toBeFalsy();
   })
 })
 
 describe('conway(isAlive, livingNeighbors) -> Boolean', () => {
   describe('living cells', () => {
     it('with less than 2 neighbors die by underpopulation', () => {
-      expect(conway(true, 0)).toEqual(false)
-      expect(conway(true, 1)).toEqual(false)
-    })
+      expect(conway(true, 0)).toEqual(false);
+      expect(conway(true, 1)).toEqual(false);
+    });
 
     it('with 2 or 3 neighbors survive', () => {
-      expect(conway(true, 2)).toEqual(true)
-      expect(conway(true, 3)).toEqual(true)
-    })
+      expect(conway(true, 2)).toEqual(true);
+      expect(conway(true, 3)).toEqual(true);
+    });
 
     it('with more than 3 neighbors die of suffocation', () => {
       expect(conway(true, 4)).toEqual(false)
@@ -176,28 +176,28 @@ describe('conway(isAlive, livingNeighbors) -> Boolean', () => {
 
 describe('tick(present: Board, future: Board!, rules)', () => {
   it('returns [future, present]', () => {
-    var present = new Board, future = new Board
+    var present = new Board, future = new Board;
     expect(tick(present, future)).toEqual([future, present])
-  })
+  });
 
   describe('with rules that turn everything on', () => {
     function everythingLives() { return true }
 
     it('sets all cells alive in the future', () => {
       var present = new Board(2, 2), future = new Board(2, 2)
-      tick(present, future, everythingLives)
+      tick(present, future, everythingLives);
       expect(future.cells).toEqual([1, 1,
                                     1, 1])
     })
-  })
+  });
 
   describe('with rules that toggle cells', () => {
     function flip(alive) { return !alive }
     
     it('flips living cells to dead', () => {
-      var present = new Board(2, 2, [1, 1, 0, 0])
-      var future = new Board(2, 2)
-      tick(present, future, flip)
+      var present = new Board(2, 2, [1, 1, 0, 0]);
+      var future = new Board(2, 2);
+      tick(present, future, flip);
       expect(future.cells).toEqual([0, 0, 1, 1])
     })
   })
@@ -207,11 +207,11 @@ describe('tick(present: Board, future: Board!, rules)', () => {
       var block = new Board(2, 2, [
         1, 1,
         1, 1,
-      ])
-      var future = new Board(2, 2)
-      tick(block, future)
+      ]);
+      var future = new Board(2, 2);
+      tick(block, future);
       expect(future.cells).toEqual(block.cells)
-    })
+    });
 
     it('advances a glider from gen1 to gen2', () => {
       var glider1 = new Board(3, 3, [
