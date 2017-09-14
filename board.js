@@ -16,6 +16,7 @@ function Board(width=32, height=32, cells) {
   //
   // Since we only really need to track 1 bit per cell, this is positively
   // luxurious for our needs.
+  console.log("nope");
   this.cells = cells || new Uint8Array(width * height)
 }
 
