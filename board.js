@@ -139,12 +139,6 @@ function tick(present, future, rules = conway) {
       return elem;
     });
   } else {
-    Object.assign(future.cells, present.cells);
-
-    for (let theCell in future.cells) {
-      futureArr.push(future.cells[theCell]);
-    }
-
     future.cells = futureArr.map(elem => {
       if (rules(elem)) {
         return 1;
