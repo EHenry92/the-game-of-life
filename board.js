@@ -93,6 +93,8 @@ Board.prototype.livingNeighbors = function([row, col]) {
  */
 Board.prototype.toggle = function(coords) {
   this.set(coords,!this.get(coords));
+  //not necessary but allows methods to be chained;
+  return this;
 };
 
 /**
@@ -121,13 +123,7 @@ function conway(isAlive, numLivingNeighbors) {
  * @param {(Boolean, Int) -> Boolean} rules (default: conway)
  */
 function tick(present, future, rules = conway) {
-  const futureArr = [];
-
-  for (let keys in future.cells) {
-    futureArr.push(future.cells[keys]);
-  }
-
-  const width = Math.sqrt(futureArr.length);
+  const width = Math.sqrt(future.cells.length);
 
   const findCoords = index => {
     const row = Math.floor(index/width),
@@ -136,32 +132,26 @@ function tick(present, future, rules = conway) {
     return [row, col];
   };
 
-  if (rules === conway) {
-    for (let i = 0; i < futureArr.length; i++) {
-      futureArr[i] = rules(futureArr[i], present.livingNeighbors(findCoords(i)));
+     
+  if(rules === conway) {
+    future.cells = present.cells.map(function (elm,idx) {
+      if(conway(elm,present.livingNeighbors(findCoords(idx))))
+        {return 1;}
+      else {return 0;}
+
+    })
+
+}
+else {
+  future.cells = present.cells.map(elm => {
+      if(rules(elm))  {return 1;}
+      else{return 0;}
+   }
+  );
+}
 
 
-      // if (rules(futureArr[i], present.livingNeighbors(findCoords(i)))) {
-      //   present.cells[i].toggle(futureArr[i]);
-      // }
-    }
+return [future, present];
 
-    future.cells = futureArr.map((elem) => {
-      if (conway(elem)) {
-        return 1;
-      } else {
-        return 0;
-      }
-    });
-  } else {
-    future.cells = futureArr.map(elem => {
-      if (rules(elem)) {
-        return 1;
-      } else {
-        return 0;
-      }
-    });
-  }
 
-  return [future, present];
 }
