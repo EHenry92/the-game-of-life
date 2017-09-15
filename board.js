@@ -121,22 +121,37 @@ function conway(isAlive, numLivingNeighbors) {
  * @param {(Boolean, Int) -> Boolean} rules (default: conway)
  */
 function tick(present, future, rules = conway) {
-  let futureArr = [];
+  const futureArr = [];
 
   for (let keys in future.cells) {
     futureArr.push(future.cells[keys]);
   }
 
+  const width = Math.sqrt(futureArr.length);
+
+  const findCoords = index => {
+    const row = Math.floor(index/width),
+      col = Math.floor(Math.abs(index - (row*width)));
+
+    return [row, col];
+  };
 
   if (rules === conway) {
     for (let i = 0; i < futureArr.length; i++) {
-      if (rules(futureArr, present.livingNeighbors(findCoords(i)))) {
-        futureArr[i].toggle(futureArr[i]);
-      }
+      futureArr[i] = rules(futureArr[i], present.livingNeighbors(findCoords(i)));
+
+
+      // if (rules(futureArr[i], present.livingNeighbors(findCoords(i)))) {
+      //   present.cells[i].toggle(futureArr[i]);
+      // }
     }
 
-    future.cells = futureArr.map((elem, index) => {
-      return elem;
+    future.cells = futureArr.map((elem) => {
+      if (conway(elem)) {
+        return 1;
+      } else {
+        return 0;
+      }
     });
   } else {
     future.cells = futureArr.map(elem => {
@@ -149,15 +164,4 @@ function tick(present, future, rules = conway) {
   }
 
   return [future, present];
-}
-
-function findCoords(index) {
-  // console.log(index);
-
-  const row = Math.floor(index/this.width),
-        col = Math.floor(index - (row*this.width));
-
-  // console.log(row, col);
-
-  return [row, col];
 }
