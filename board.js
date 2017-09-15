@@ -121,53 +121,49 @@ function conway(isAlive, numLivingNeighbors) {
  * @param {(Boolean, Int) -> Boolean} rules (default: conway)
  */
 function tick(present, future, rules = conway) {
-  const futureArr = [];
+  let futureArr = [];
 
-  if (conway) {
+  for (let keys in future.cells) {
+    futureArr.push(future.cells[keys]);
+  }
+
+
+  if (rules === conway) {
     for (let i = 0; i < futureArr.length; i++) {
-      if (rules(futureArr[i], future.livingNeighbors(findCoords(i)))) {
-        future.cells[i] = 1;
-      } else {
-        future.cells[i] = 0;
+      if (rules(futureArr, present.livingNeighbors(findCoords(i)))) {
+        futureArr[i].toggle(futureArr[i]);
       }
     }
 
+    future.cells = futureArr.map((elem, index) => {
+      return elem;
+    });
+  } else {
+    Object.assign(future.cells, present.cells);
 
-    // future.cells = futureArr.map(elem => {
-    //   console.log('elem:',elem);
-    //   if (rules(elem, elem.livingNeighbors(findCoords()))) {
-    //     return 1;
-    //   } else {
-    //     return 0;
-    //   }
-    // });
-  }
-
-  Object.assign(future.cells, present.cells);
-
-  for (let theCell in future.cells) {
-    futureArr.push(future.cells[theCell]);
-  }
-
-  future.cells = futureArr.map(elem => {
-    if (rules(elem)) {
-      return 1;
-    } else {
-      return 0;
+    for (let theCell in future.cells) {
+      futureArr.push(future.cells[theCell]);
     }
-  });
 
+    future.cells = futureArr.map(elem => {
+      if (rules(elem)) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
+  }
 
   return [future, present];
 }
 
 function findCoords(index) {
-  console.log(index)
+  // console.log(index);
 
   const row = Math.floor(index/this.width),
         col = Math.floor(index - (row*this.width));
 
-  console.log(row, col)
+  // console.log(row, col);
 
   return [row, col];
 }
