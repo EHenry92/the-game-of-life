@@ -131,27 +131,20 @@ function tick(present, future, rules = conway) {
 
     return [row, col];
   };
-
-     
-  if(rules === conway) {
+  if (rules === conway) {
     future.cells = present.cells.map(function (elm,idx) {
-      if(conway(elm,present.livingNeighbors(findCoords(idx))))
+      if (conway(elm,present.livingNeighbors(findCoords(idx))))
         {return 1;}
       else {return 0;}
 
     })
-
-}
-else {
-  future.cells = present.cells.map(elm => {
-      if(rules(elm))  {return 1;}
-      else{return 0;}
-   }
-  );
-}
-
-
-return [future, present];
-
-
+  }
+  else {
+    future.cells = present.cells.map(elm => {
+        if (rules(elm))  {return 1;}
+        else {return 0;}
+    }
+    );
+  }
+  return [future, present];
 }

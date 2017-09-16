@@ -1,15 +1,25 @@
-var mainElement = document.getElementById('main')
+var mainElement = document.getElementById('main');
 if (mainElement) {
   var game = Life(mainElement)
 
   // Connect #step_btn to the step function
   document.getElementById('step_btn')
-    .addEventListener('click', game.step)
+    .addEventListener('click', game.step);
+  document.getElementById('play_btn')
+    .addEventListener('click', function () {
+      game.togglePlaying();
+    });
+  document.getElementById('reset_btn')
+    .addEventListener('click', game.random);
+  document.getElementById('clear_btn')
+    .addEventListener('click', game.clear);
 
   // TODO: Connect other buttons.
 }
 
 function Life(container, width=12, height=12) {
+  var playing = false;
+  let hm;
   // Create boards for the present and future.
   // Game boards are somewhat expensive to create, so we're going
   // to be reusing them. Each time we step the game, `future`
@@ -26,7 +36,7 @@ function Life(container, width=12, height=12) {
   // Add a mouse down listener to our table
   table.addEventListener('mousedown', toggleCellFromEvent)
 
-  function createTable() {
+  function createTable() {    
     // create <table> element
     var table = document.createElement('table');       // <table
     table.classList.add('board')                       //   class='board'>
@@ -39,23 +49,32 @@ function Life(container, width=12, height=12) {
         // Element itself, letting us fetch it
         // in a click listener later.
         td.coord = [r, c];        
-        tr.appendChild(td);                            //     </td>
+        tr.appendChild(td);     
+                               //     </td>
       }
       table.appendChild(tr);                           //   </tr>
     }                                                  //  </table>
-    return table    
+    return table;
   }
   
   function toggleCellFromEvent(event) {
     // FIXME: This currently always toggles cell (0, 0).
     // How do we get the coordinate of the cell that was clicked on?
     // HINT: https://developer.mozilla.org/en-US/docs/Web/API/Event/target
-    var cell = document.getElementById('0-0'); // ⬅️ Fix me
-    present.toggle(cell.coord)
+    var cell = document.getElementById(event.target.id); // ⬅️ Fix me
+    present.toggle(cell.coord);
     paint()
   }
 
   function paint() {
+    let tCells = document.getElementsByTagName('td');
+    for (var i = 0;i < tCells.length;i++) {
+      if (present.cells[present.indexFor(tCells[i].coord)]) 
+        {tCells[i].classList.add('alive');}
+      else {tCells[i].classList.remove('alive');}
+    }
+  
+   
     // TODO:
     //   1. For each <td> in the table:
     //     a. If its cell is alive, give the <td> the `alive` CSS class.
@@ -72,7 +91,7 @@ function Life(container, width=12, height=12) {
   function step() {
     // Hello, destructuring assignment:
     //   https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment
-    ;[present, future] = tick(present, future);  // tick is from board.js
+    [present, future] = tick(present, future);  // tick is from board.js
     // ⬆️ Why is there a semicolon at the beginning of this line?
     //
     // It's not necessary, but we have it there to avoid a confusing problem.
@@ -104,6 +123,8 @@ function Life(container, width=12, height=12) {
   }
 
   function play() {
+    playing = true;
+    hm = setInterval(function () {step();},100);
     // TODO:
     // Start playing by running the `step` function    
     // automatically repeatedly every fixed time interval
@@ -113,21 +134,30 @@ function Life(container, width=12, height=12) {
   }
 
   function stop() {
+    playing = false;
+    clearInterval(hm);
     // TODO: Stop autoplay.
     // HINT:
     // https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/clearInterval
   }
 
   function togglePlaying() {
+    if (playing) {game.stop();}
+    else {game.play();}
     // TODO: If we're playing, stop. Otherwise, start playing.
   }
 
-  function clear() {
-    // TODO: Clear the board
+  function clear(elm) {
+    [present, future] = tick(present, future,function () {return 0;});  // tick is from board.js
+    paint();
+        // TODO: Clear the board
   }
 
   function random() {
-    // TODO: Randomize the board
+    [present, future] = tick(present, future,function () {
+            return Math.round(Math.random());
+    });
+    paint();
   }
 
   return {play, step, stop, togglePlaying, random, clear}
